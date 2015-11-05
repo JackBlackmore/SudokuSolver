@@ -70,4 +70,9 @@ importsuduko(Cells)
 # Populate potential values
 updatepossibles(Grid)
 
+# Solve Square definites
+solvesquaredefinites(Grid)
+
+#Output Result
+exportsuduko(Cells)
 print "wait"

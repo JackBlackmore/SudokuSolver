@@ -64,8 +64,8 @@ Grid["Squares"] = Squares
 Grid["BigRows"] = BigRows
 Grid["BigColumns"] = BigColumns
 
-# Import suduko.txt file to fill our Cells dictionary
-importsuduko(Cells)
+# Import sudoku.txt file to fill our Cells dictionary
+importsudoku("sudoku_hard.txt",Cells)
 
 # Populate potential values
 updatepossibles(Grid)
@@ -73,6 +73,8 @@ updatepossibles(Grid)
 # Solve definites
 solvedefinites(Grid)
 
-#Output Result
-exportsuduko(Cells)
-print "wait"
+# Check Results
+checkresults(Grid)
+
+# Output Result
+exportsudoku(Grid)

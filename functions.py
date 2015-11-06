@@ -49,12 +49,65 @@ def removesquareimpossibles(Grid):
         for cell in Square:
             if cell.value != "": impossiblevalues.append(cell.value)
 
-        # Remvoe impossible values from possible values
+        # Remove impossible values from possible values
         for cell in Square:
             if cell.value == "":
                 for v in impossiblevalues:
                     if v in cell.possiblevalues: cell.removepossible(v)
 
+def solvedefinites(Grid):
+    rerun = False
+    if solverowdefinites(Grid) == True: rerun = True
+    if solvecolumndefinites(Grid) == True: rerun = True
+    if solvesquaredefinites(Grid) == True: rerun = True
+
+    if rerun == True:
+        updatepossibles(Grid)
+        solvedefinites(Grid)
+
+def solverowdefinites(Grid):
+    rerun = False
+    for Row in Grid["Rows"].itervalues():
+        # Initialise valuecounty dictionary
+        valuecount = {}
+        for v in xrange(1,10): valuecount[str(v)] = 0
+
+        # Populate valuecount
+        for cell in Row:
+            if cell.value == "":
+                for v in cell.possiblevalues: valuecount[str(v)] += 1
+
+        #
+        for cell in Row:
+            if cell.value == "":
+                for v in cell.possiblevalues:
+                    if valuecount[str(v)] == 1:
+                        cell.value = str(v)
+                        cell.possiblevalues = []
+                        rerun = True
+    return rerun
+
+def solvecolumndefinites(Grid):
+    rerun = False
+    for Column in Grid["Columns"].itervalues():
+        # Initialise valuecounty dictionary
+        valuecount = {}
+        for v in xrange(1,10): valuecount[str(v)] = 0
+
+        # Populate valuecount
+        for cell in Column:
+            if cell.value == "":
+                for v in cell.possiblevalues: valuecount[str(v)] += 1
+
+        #
+        for cell in Column:
+            if cell.value == "":
+                for v in cell.possiblevalues:
+                    if valuecount[str(v)] == 1:
+                        cell.value = str(v)
+                        cell.possiblevalues = []
+                        rerun = True
+    return rerun
 
 def solvesquaredefinites(Grid):
     rerun = False
@@ -76,11 +129,7 @@ def solvesquaredefinites(Grid):
                         cell.value = str(v)
                         cell.possiblevalues = []
                         rerun = True
-
-    # Rerun possible updates and re-check
-    if rerun == True:
-        updatepossibles(Grid)
-        solvesquaredefinites(Grid)
+    return rerun
 
 def exportsuduko(Cells):
     f = open("suduko_output.txt","w")

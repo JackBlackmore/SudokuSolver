@@ -70,8 +70,8 @@ importsuduko(Cells)
 # Populate potential values
 updatepossibles(Grid)
 
-# Solve Square definites
-solvesquaredefinites(Grid)
+# Solve definites
+solvedefinites(Grid)
 
 #Output Result
 exportsuduko(Cells)

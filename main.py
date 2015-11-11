@@ -1,5 +1,6 @@
 from cell import Cell
 from functions import *
+from copy import *
 
 __author__ = '30137120'
 
@@ -15,7 +16,7 @@ Grid = {}
 for row in xrange(1, 10):
     Row = []
     for col in xrange(1, 10):
-        Cells["R" + str(row) + "C" + str(col)] = Cell("R" + str(row) + "C" + str(col))
+        Cells["R" + str(row) + "C" + str(col)] = Cell("R" + str(row) + "C" + str(col), str(row), str(col))
         Row.append(Cells["R" + str(row) + "C" + str(col)])
 
     Rows["Row" + str(row)] = Row
@@ -27,7 +28,7 @@ for col in xrange(1, 10):
         Column.append(Cells["R" + str(row) + "C" + str(col)])
     Columns["Column" + str(col)] = Column
 
-# Populate BigCells dictionary
+# Populate Squares dictionary
 squarecount = 1
 
 for RowSet in ([1, 2, 3], [4, 5, 6], [7, 8, 9]):
@@ -36,6 +37,7 @@ for RowSet in ([1, 2, 3], [4, 5, 6], [7, 8, 9]):
         for row in RowSet:
             for col in ColSet:
                 square.append(Cells["R" + str(row) + "C" + str(col)])
+                Cells["R" + str(row) + "C" + str(col)].square = "Square" + str(squarecount)
         Squares["Square" + str(squarecount)] = square
         squarecount += 1
 
@@ -75,6 +77,10 @@ solvedefinites(Grid)
 
 # Check Results
 checkresults(Grid)
+
+# Simulation Time
+GuessGrid = deepcopy(Grid)
+
 
 # Output Result
 exportsudoku(Grid)

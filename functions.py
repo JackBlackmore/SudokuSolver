@@ -14,6 +14,7 @@ def updatepossibles(Grid):
     updaterowpossibles(Grid)
     removecolumnimpossibles(Grid)
     removesquareimpossibles(Grid)
+    removepossiblesbysquares(Grid)
 
 def updaterowpossibles(Grid):
     for Row in Grid["Rows"].itervalues():
@@ -54,6 +55,50 @@ def removesquareimpossibles(Grid):
             if cell.value == "":
                 for v in impossiblevalues:
                     if v in cell.possiblevalues: cell.removepossible(v)
+
+def removepossiblesbysquares(Grid):
+    # Check by Sqaure
+    # if the only place a possible number can be is contained in a single row or column then it
+    # must be in that row or column and you can eliminate the possibility of that number
+    # from cells in the same row or column not in that square
+
+    for Square in Grid["Squares"].iteritems():
+        # Create Dictionaries to hold possibles
+        PossiblesBySquare = []
+        PossiblesByRow = {}
+        PossiblesByColumn = {}
+        for Cell in Square[1]:
+            Row = "Row" + Cell.reference[1]
+            Column = "Column" + Cell.reference[3]
+            if Cell.value == "":
+                for v in Cell.possiblevalues:
+                    if v not in PossiblesByRow: PossiblesByRow[v] = []
+                    if Row not in PossiblesByRow[v]: PossiblesByRow[v].append(Row)
+
+                    if v not in PossiblesByColumn: PossiblesByColumn[v] = []
+                    if Column not in PossiblesByColumn[v]: PossiblesByColumn[v].append(Column)
+
+                    if v not in PossiblesBySquare: PossiblesBySquare.append(v)
+                    # if v not in PossiblesByRow[Row]: PossiblesByRow[Row].append(v)
+                    # if v not in PossiblesByColumn[Column]: PossiblesByColumn[Column].append(v)
+
+        for v in PossiblesByRow.iteritems():
+            if len(v[1]) == 1:
+                removepossiblesfromroworcolumn(Grid, v[1][0], v[0], Square[0])
+
+        for v in PossiblesByColumn.iteritems():
+            if len(v[1]) == 1:
+                removepossiblesfromroworcolumn(Grid, v[1][0], v[0], Square[0])
+
+def removepossiblesfromroworcolumn(Grid, location, possible, notinsquare):
+    if location[:3] == "Row":
+        array = Grid["Rows"][location]
+    else:
+        array = Grid["Columns"][location]
+
+    for cell in array:
+        if cell.value == "" and cell.square != notinsquare: cell.removepossible(possible)
+
 
 def solvedefinites(Grid):
     print "solve"

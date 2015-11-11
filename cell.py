@@ -15,3 +15,6 @@ class Cell(object):
 
     def removepossible(self,value):
         if value in self.possiblevalues: self.possiblevalues.remove(value)
+
+    def clearpossible(self):
+        self.possiblevalues = []

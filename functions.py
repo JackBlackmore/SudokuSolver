@@ -1,3 +1,4 @@
+from copy import *
 __author__ = '30137120'
 
 
@@ -101,7 +102,6 @@ def removepossiblesfromroworcolumn(Grid, location, possible, notinsquare):
 
 
 def solvedefinites(Grid):
-    print "solve"
     updated = False
     if solverowdefinites(Grid) == True: updated = True
     if solvecolumndefinites(Grid) == True: updated = True
@@ -251,3 +251,47 @@ def exportsudoku(Grid):
         f.write(rowstring)
 
     f.write("Status: " + Grid["SolvedStatus"])
+
+def simulatesolution(Grid, layer, assumption):
+    GuessGrid = deepcopy(Grid)
+    print assumption
+    # Create dictionary of unsolved Cells with Possible Values
+    UnsolvedCells = {}
+    for Cell in GuessGrid["Cells"].itervalues():
+        if Cell.value == "": UnsolvedCells[Cell.reference] = Cell.possiblevalues
+
+    # Loop through dictionary of unsolved cells
+    for UnsolvedCell in UnsolvedCells.iteritems():
+
+        # Try each possible value for that cell. If can solve from there export and quit
+        # otherwise remove from list and try the next
+        for possiblevalue in UnsolvedCell[1]:
+            GuessGrid = {}
+            GuessGrid = deepcopy(Grid)
+            GuessGrid["Cells"][UnsolvedCell[0]].value = possiblevalue
+            GuessGrid["Cells"][UnsolvedCell[0]].clearpossible()
+
+            updatepossibles(GuessGrid)
+            solvedefinites(GuessGrid)
+            checkresults(GuessGrid)
+
+            if GuessGrid['SolvedStatus'] == "Success":
+                exportsudoku(GuessGrid)
+                raise SystemExit
+
+
+    # Recursively go deeper if cannot complete from one guess
+    if layer == 1:
+        for UnsolvedCell in UnsolvedCells.iteritems():
+            # Try each possible value for that cell. If can solve from there export and quit
+            # otherwise remove from list and try the next
+            for possiblevalue in UnsolvedCell[1]:
+                GuessGrid2 = {}
+                GuessGrid2 = deepcopy(Grid)
+                GuessGrid2["Cells"][UnsolvedCell[0]].value = possiblevalue
+                GuessGrid2["Cells"][UnsolvedCell[0]].clearpossible()
+                assumption = UnsolvedCell[0] + "|" + possiblevalue
+                simulatesolution(GuessGrid2, 2, assumption)
+
+
+    exportsudoku(Grid)

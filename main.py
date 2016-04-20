@@ -1,6 +1,6 @@
 from cell import Cell
 from functions import *
-from copy import *
+
 
 __author__ = '30137120'
 
@@ -61,32 +61,6 @@ if Grid['SolvedStatus'] == "Success":
     exportsudoku(Grid)
 else:
     # Simulation Time
-    GuessGrid = deepcopy(Grid)
+    simulatesolution(Grid, 1, "")
 
-    # Create dictionary of unsolved Cells with Possible Values
-    UnsolvedCells = {}
-    for Cell in GuessGrid["Cells"].itervalues():
-        if Cell.value == "": UnsolvedCells[Cell.reference] = Cell.possiblevalues
-
-    # Loop through dictionary of unsolved cells
-    for UnsolvedCell in UnsolvedCells.iteritems():
-
-        # Try each possible value for that cell. If can solve from there export and quit
-        # otherwise remove from list and try the next
-        for possiblevalue in UnsolvedCell[1]:
-            GuessGrid = {}
-            GuessGrid = deepcopy(Grid)
-            GuessGrid["Cells"][UnsolvedCell[0]].value = possiblevalue
-            GuessGrid["Cells"][UnsolvedCell[0]].clearpossible()
-
-            updatepossibles(GuessGrid)
-            solvedefinites(GuessGrid)
-            checkresults(GuessGrid)
-
-            if GuessGrid['SolvedStatus'] == "Success":
-                exportsudoku(GuessGrid)
-                raise SystemExit
-            else: UnsolvedCell[1].remove(possiblevalue)
-
-    exportsudoku(Grid)
 
